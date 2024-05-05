@@ -8,9 +8,18 @@ const connectToMongo = async () => {
         mongoose.set('strictQuery', false)
         mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
         console.log('Mongo connected')
+        let bucket;
+        mongoose.connection.on("connected", () => {
+            var db = mongoose.connections[0].db;
+            bucket = new mongoose.mongo.GridFSBucket(db, {
+                bucketName: "newBucket"
+            });
+            // console.log(bucket);
+        });
+
         // console.log(process.env.MONGODB_URI)
 
-    } catch(error) {
+    } catch (error) {
         console.log(error)
         process.exit()
     }
